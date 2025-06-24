@@ -1,12 +1,12 @@
 # Bees Data Platform: Source Code
 
-This folder contains the core source code for the Bees Data Platform, a modular and cloud-native data pipeline built on Google Cloud Platform (GCP). The platform ingests, processes, validates, and orchestrates data using a layered lakehouse architecture (bronze, silver, gold) and leverages Kubernetes for scalable execution.
+This folder contains the core source code for the Bees Data Platform, a modular and cloud-native data pipeline built on Google Cloud Platform (GCP). The platform ingests, processes, validates and orchestrates data using a layered lakehouse architecture (bronze, silver, gold) and leverages Kubernetes for scalable execution.
 
 ## Structure and Key Components
 
 - **pipeline/**: ETL jobs for each data layer:
   - **bronze/**: Ingests raw data from external APIs into GCS.
-  - **silver/**: Cleans, deduplicates, and curates data as Delta Lake tables.
+  - **silver/**: Cleans, deduplicates and curates data as Delta Lake tables.
   - **gold/**: Aggregates and transforms curated data for analytics.
 - **dags/**: Apache Airflow DAGs for orchestrating ETL workflows on Kubernetes.
 - **tests/**: Data quality validation jobs using PyDeequ and Spark.

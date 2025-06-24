@@ -4,13 +4,13 @@ This folder contains the ETL pipeline jobs for the Bees Data Platform, organized
 
 ## Key Components
 
-- **Bronze:** Ingests raw data from the Open Brewery DB API, stores it as JSON in GCS and manages incremental/full loads with metadata.
+- **Bronze:** Ingests raw data from the Open Brewery DB API, stores it as JSON in GCS and manages incremental or full loads with metadata.
 - **Silver:** Reads raw data from bronze, applies schema enforcement and deduplication and writes curated Delta Lake tables to GCS.
 - **Gold:** Aggregates curated data from silver, producing analytics-ready Delta tables for downstream consumption.
 
 ## Main Libraries and Tools
 
-- **Python & Apache Spark:** Core languages for ETL logic and distributed processing.
+- **Python & Apache Spark:** Core technologies for ETL logic and distributed processing.
 - **Delta Lake:** Provides ACID-compliant, scalable storage on GCS.
 - **Docker:** Containerizes each ETL job for reproducibility.
 - **Kubernetes:** Orchestrates job execution in the cloud.
@@ -23,6 +23,6 @@ This folder contains the ETL pipeline jobs for the Bees Data Platform, organized
 
 ## Details
 
-- For see bronze layer job details, see the [bronze/readme](bronze/readme.md).
-- For silver layer job details, see the [silver/readme](silver/readme.md).
-- For gold layer job details, see the [gold/readme](gold/readme.md).
+- For details on the bronze layer job, see the [bronze/readme](bronze/readme.md).
+- For details on the silver layer job, see the [silver/readme](silver/readme.md).
+- For details on the gold layer job, see the [gold/readme](gold/readme.md).

@@ -1,12 +1,12 @@
 # Spark Operator Kubernetes Deployment
 
-This folder contains configuration files for deploying the Spark Operator on Kubernetes using Helm. The Spark Operator simplifies running and managing Apache Spark applications natively on Kubernetes clusters.
+This folder contains configuration files for deploying the Spark Operator on Kubernetes using Helm. The Spark Operator streamlines the process of running and managing Apache Spark applications natively on Kubernetes clusters.
 
 ## Key Components
 
 - **Spark Operator:** Extends Kubernetes to manage the lifecycle of Spark applications as custom resources.
-- **Helm:** Used to install and configure the Spark Operator with custom settings (`values_helm.yaml`).
-- **RBAC (rbac.yaml):** Defines the necessary permissions for the Spark Operator to manage Spark jobs securely within the cluster.
+- **Helm:** Installs and configures the Spark Operator with custom settings (`values_helm.yaml`).
+- **RBAC (`rbac.yaml`):** Defines the necessary permissions for the Spark Operator to securely manage Spark jobs within the cluster.
 
 ## Usage
 
@@ -23,4 +23,4 @@ This folder contains configuration files for deploying the Spark Operator on Kub
      --namespace spark
    ```
 
-Refer to the main project documentation for more details on submitting Spark jobs and advanced configuration.
+For more information on submitting Spark jobs and advanced configuration, refer to the main project documentation.

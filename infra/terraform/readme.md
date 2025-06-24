@@ -5,7 +5,7 @@ This folder contains Terraform code to provision and manage the core infrastruct
 ## Key Components
 
 - **Terraform:** Infrastructure as code tool for declarative cloud resource management.
-- **Google Cloud Platform (GCP):** Provides compute, storage, and managed Kubernetes (GKE).
+- **Google Cloud Platform (GCP):** Provides compute, storage and managed Kubernetes (GKE).
 - **GKE (Google Kubernetes Engine):** Hosts Airflow, Spark Operator and other containerized workloads.
 - **Google Cloud Storage (GCS):** Stores data, Airflow DAGs and logs.
 - **IAM:** Manages service accounts and permissions for secure operations.

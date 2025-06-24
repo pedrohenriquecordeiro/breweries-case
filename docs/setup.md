@@ -26,7 +26,7 @@ export $(grep -v '^#' infra/.env | xargs)
 
 ## 3. Install Google Cloud SDK
 
-Install the Google Cloud SDK to interact with GCP services. This is required for managing GCP resources, authenticating, and deploying applications.
+Install the Google Cloud SDK to interact with GCP services. This is required for managing GCP resources, authenticating and deploying applications.
 
 ```bash
 brew install --cask google-cloud-sdk
@@ -141,7 +141,7 @@ gsutil cp src/dags/*.py gs://bees-airflow-dags/
 
 
 ## 12. Configure GKE Context and Namespace
-Connects to cluster, and creates namespace.
+Connects to cluster and creates namespace.
 ```bash
 
 gcloud container clusters get-credentials airflow-cluster --zone us-central1-c --project $PROJECT_ID

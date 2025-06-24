@@ -2,13 +2,9 @@
 
 This folder contains the "gold" layer ETL job for the Bees Data Platform. The gold job is responsible for transforming and aggregating curated data from the silver layer, producing analytics-ready datasets stored in Delta Lake format on Google Cloud Storage (GCS). This job is designed to run as a containerized Spark application on Kubernetes.
 
-
-
 ## Overview
 
-The gold ETL job reads processed data from the silver Delta table in GCS, performs aggregations (such as brewery counts by type, country, state, and city) and writes the results to the gold Delta table. It ensures that the analytics layer is always up-to-date and optimized for downstream consumption. The job also manages Delta Lake housekeeping tasks, such as vacuuming old data versions.
-
-
+The gold ETL job reads processed data from the silver Delta table in GCS, performs aggregations (such as brewery counts by type, country, state and city) and writes the results to the gold Delta table. It ensures that the analytics layer is always up-to-date and optimized for downstream consumption. The job also manages Delta Lake housekeeping tasks, such as vacuuming old data versions.
 
 ## Codebase Breakdown
 
@@ -31,8 +27,6 @@ The gold ETL job reads processed data from the silver Delta table in GCS, perfor
   Google Cloud service account key file used for authenticating with GCS.  
   **Note:** This file should be kept secure and never committed to public repositories.
 
-
-
 ## Key Libraries and Tools
 
 - **Apache Spark:** Distributed data processing engine for large-scale ETL and analytics.
@@ -43,8 +37,6 @@ The gold ETL job reads processed data from the silver Delta table in GCS, perfor
 - **Docker:** Containerizes the ETL job for reproducible, scalable execution.
 - **Bitnami Spark Image:** Provides a production-ready Spark runtime with OpenJDK.
 
-
-
 ## Folder and File Structure
 
 ```
@@ -54,6 +46,6 @@ gold/
 └── main.py                     # Main Spark ETL script for the gold layer
 ```
 
-- **Dockerfile:** Builds the Spark job image, installs dependencies, and sets up secrets.
-- **main.py:** Orchestrates the ETL process, including reading from silver, aggregating, and writing to gold.
+- **Dockerfile:** Builds the Spark job image, installs dependencies and sets up secrets.
+- **main.py:** Orchestrates the ETL process, including reading from silver, aggregating and writing to gold.
 - **gke-service-account.json:** Credentials for GCS access (should be injected securely in production).

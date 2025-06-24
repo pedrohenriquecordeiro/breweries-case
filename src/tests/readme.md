@@ -2,13 +2,9 @@
 
 This folder contains the data quality validation suite for the Bees Data Platform. The tests are designed to ensure the integrity, consistency and correctness of data processed through the ETL pipeline, with a focus on validating the silver layer Delta tables stored in Google Cloud Storage (GCS). The tests are implemented as a containerized Spark job using PySpark and PyDeequ and are intended to run on Kubernetes.
 
-
-
 ## Overview
 
 The data quality job reads the curated silver Delta table from GCS, validates its schema and runs a series of automated data quality checks using PyDeequ. These checks include schema validation, completeness, uniqueness and custom business rules. The results help maintain high data quality standards and provide early detection of data issues.
-
-
 
 ## Codebase Breakdown
 
@@ -23,14 +19,13 @@ The data quality job reads the curated silver Delta table from GCS, validates it
 - **Dockerfile**  
   Defines the container image for the data quality job. It:
   - Uses a Bitnami Spark base image.
-  - Installs required JARs for Delta Lake, Iceberg, and Deequ.
+  - Installs required JARs for Delta Lake, Iceberg and Deequ.
   - Installs Python dependencies, including PyDeequ.
   - Copies the application code and service account credentials.
 
 - **gke-service-account.json**  
   Google Cloud service account key file for authenticating with GCS.  
   **Note:** This file should be kept secure and never committed to public repositories.
-
 
 ## Key Libraries and Tools
 
@@ -42,8 +37,6 @@ The data quality job reads the curated silver Delta table from GCS, validates it
 - **Docker:** Containerizes the test job for reproducible execution.
 - **Bitnami Spark Image:** Provides a production-ready Spark runtime with OpenJDK.
 
-
-
 ## Folder and File Structure
 
 ```
@@ -54,7 +47,7 @@ tests/
 └── readme.md                   # References and documentation links
 ```
 
-- **Dockerfile:** Builds the test job image, installs dependencies, and sets up secrets.
+- **Dockerfile:** Builds the test job image, installs dependencies and sets up secrets.
 - **main.py:** Orchestrates data quality validation, including schema and business rule checks.
 - **gke-service-account.json:** Credentials for GCS access (should be injected securely in production).
 - **readme.md:** Provides links to PyDeequ and Deequ documentation.

@@ -4,16 +4,16 @@ This folder contains configuration files for deploying Apache Airflow on Kuberne
 
 ## Key Components
 
-- **Apache Airflow:** Open-source platform for orchestrating complex data workflows.
-- **Helm:** Package manager for Kubernetes, used to deploy and manage Airflow (`values_helm.yaml`).
+- **Apache Airflow:** An open-source platform for orchestrating complex data workflows.
+- **Helm:** A package manager for Kubernetes, used to deploy and manage Airflow (`values_helm.yaml`).
 - **Kubernetes:** Orchestrates Airflow components and ensures high availability.
 - **GCSFuse:** Mounts Google Cloud Storage buckets as persistent volumes for DAGs and logs.
-- **PostgreSQL & PgBouncer:** Provides Airflow metadata storage and connection pooling.
+- **PostgreSQL & PgBouncer:** Provide Airflow metadata storage and connection pooling.
 
 ## Usage
 
 1. Customize `values_helm.yaml` for your environment (SMTP, service accounts, etc.).
-2. Apply RBAC and persistent volume manifests:
+2. Apply the RBAC and persistent volume manifests:
    ```sh
    kubectl apply -f infra/kubernetes/airflow/rbac.yaml
    kubectl apply -f infra/kubernetes/airflow/pv-gcs-fuse-dags.yaml
@@ -27,4 +27,4 @@ This folder contains configuration files for deploying Apache Airflow on Kuberne
      -f infra/kubernetes/airflow/values_helm.yaml --namespace airflow
    ```
 
-See the main project README for more details.
+For more details, see the main project README.

@@ -2,13 +2,9 @@
 
 This folder contains the "silver" layer ETL job for the Bees Data Platform. The silver job is responsible for transforming and deduplicating raw data ingested by the bronze layer, producing curated Delta Lake tables in Google Cloud Storage (GCS). This job is designed to run as a containerized Spark application on Kubernetes.
 
-
-
 ## Overview
 
-The silver ETL job reads raw brewery data from the bronze layer (stored as JSON in GCS), performs schema enforcement, deduplication, incremental loading and writes the cleaned, partitioned data as a Delta Lake table to the silver layer in GCS. It ensures that only new records are appended, maintaining data integrity and supporting efficient downstream analytics.
-
-
+The silver ETL job reads raw brewery data from the bronze layer (stored as JSON in GCS), enforces schema consistency, deduplicates records and performs incremental loading. It writes the cleaned, partitioned data as a Delta Lake table to the silver layer in GCS. The process ensures that only new records are appended, maintaining data integrity and supporting efficient downstream analytics.
 
 ## Codebase Breakdown
 
@@ -33,8 +29,6 @@ The silver ETL job reads raw brewery data from the bronze layer (stored as JSON 
   Google Cloud service account key file used for authenticating with GCS.  
   **Note:** This file should be kept secure and never committed to public repositories.
 
-
-
 ## Key Libraries and Tools
 
 - **Apache Spark:** Distributed data processing engine for scalable ETL and analytics.
@@ -43,9 +37,7 @@ The silver ETL job reads raw brewery data from the bronze layer (stored as JSON 
 - **google-cloud-storage:** Python client for GCS operations.
 - **Py4J:** Enables Python-Java integration for Spark.
 - **Docker:** Containerizes the ETL job for reproducible, scalable execution.
-- **Bitnami Spark Image:** Provides a production-ready Spark runtime with OpenJDK.
-
-
+- **Bitnami Spark Image:** Production-ready Spark runtime with OpenJDK.
 
 ## Folder and File Structure
 
@@ -56,6 +48,6 @@ silver/
 └── main.py                     # Main Spark ETL script for the silver layer
 ```
 
-- **Dockerfile:** Builds the Spark job image, installs dependencies, and sets up secrets.
-- **main.py:** Orchestrates the ETL process, including reading from bronze, deduplicating, and writing to silver.
+- **Dockerfile:** Builds the Spark job image, installs dependencies and sets up secrets.
+- **main.py:** Orchestrates the ETL process, including reading from bronze, deduplicating and writing to silver.
 - **gke-service-account.json:** Credentials for GCS access (should be injected securely in production).
