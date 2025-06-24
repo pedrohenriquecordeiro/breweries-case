@@ -1,0 +1,119 @@
+# version : 1.16.0
+
+executor: "KubernetesExecutor"
+allowPodLaunching: true
+
+securityContext:
+  fsGroup: 0
+  runAsUser: 50000
+  runAsGroup: 0
+
+airflowPodAnnotations:
+  gke-gcsfuse/volumes: "true"
+  gke-gcsfuse/ephemeral-storage-limit: 8Gi # must to be less than the size of the PVC
+
+images:
+  airflow:
+    repository: phcjesus/apache-airflow-with-extensions
+    tag: v0.1.2
+    pullPolicy: IfNotPresent
+  gitSync:
+    repository: registry.k8s.io/git-sync/git-sync
+    tag: v4.3.0
+    pullPolicy: IfNotPresent
+
+config:
+  smtp:
+    smtp_host: "smtp.gmail.com"
+    smtp_starttls: "True"
+    smtp_ssl: "False"
+    smtp_port: "587"
+    smtp_mail_from: "pedrohcordeiroj@gmail.com"
+    smtp_user: "pedrohcordeiroj@gmail.com"
+    # smtp_password set via Helm --set
+
+postgresql:
+  enabled: true
+
+# PgBouncer is a lightweight PostgreSQL connection pooler.
+# It sits between Airflow and PostgreSQL database, managing and optimizing how connections are made.
+pgbouncer:
+  enabled: true
+  replicas: 1
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+webserver:
+  service:
+    type: ClusterIP
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+  defaultUser:
+    enabled: true
+    role: Admin
+    username: bees
+    email: bees@default.com
+    firstName: bee
+    lastName: user
+    password: bees
+
+ingress:
+  web:
+    enabled: false
+
+scheduler:
+  logGroomerSidecar:
+    enabled: true
+    retentionDays: 3
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+triggerer:
+  logGroomerSidecar:
+    enabled: true
+    retentionDays: 3
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+dagProcessor:
+  enabled: true
+  replicas: 1
+  logGroomerSidecar:
+    enabled: true
+    retentionDays: 3
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+workers:
+  replicas: 1
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+  logGroomerSidecar:
+    enabled: true
+    retentionDays: 3
+
+statsd:
+  enabled: false
+
+cleanup:
+  enabled: true
+  schedule: "0 0 * * *"  # Daily at midnight
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+dags:
+  persistence:
+    enabled: true
+    existingClaim: pvc-gcs-fuse-dags
+
+logs:
+  persistence:
+    enabled: true
+    existingClaim: pvc-gcs-fuse-logs

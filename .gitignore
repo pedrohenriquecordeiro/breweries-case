@@ -192,3 +192,13 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+.gitignore
+.terraform/*
+*.DS_Store
+*.tfstate
+infra/terraform/.terraform/providers/registry.terraform.io/hashicorp/google/5.45.2/darwin_arm64/terraform-provider-google_v5.45.2_x5
+infra/terraform/.terraform/providers/registry.terraform.io/hashicorp/google/5.45.2/darwin_arm64/LICENSE.txt
+infra/terraform/terraform.tfstate.backup
+infra/terraform/.terraform.lock.hcl
+*.json
+*.env
