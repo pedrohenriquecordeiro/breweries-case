@@ -6,6 +6,14 @@ This folder contains automated setup scripts for initializing the infrastructure
 
 These scripts streamline the installation of dependencies, provisioning of Google Cloud Platform (GCP) resources and deployment of core services (Airflow, Spark Operator) on Kubernetes. They automate Docker image builds, service account configuration and the upload of Airflow DAGs, enabling a fast and reproducible project setup.
 
+## Prerequisites
+- **macOS or Ubuntu**: The scripts are tailored for these operating systems.
+- **GCP Project**: You need a GCP project with billing enabled.
+- **.env File**: Place a `.env` file in the `infra/` directory with the following variables:
+  - `GCP_PROJECT_ID`: Your GCP project ID.
+  - `TF_VAR_project_id`: Your Terraform project ID.
+  - `SMTP_PASSWORD`: Password for SMTP email notifications.
+
 # Required GCP Permissions to Execute the Script
 
 If you're bootstrapping quickly, assigning the following roles is usually sufficient:

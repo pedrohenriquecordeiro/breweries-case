@@ -1,43 +1,15 @@
 #!/bin/bash
 
-set -euo pipefail
-
 # ------------------------------------------------------------------------
 # Load environment variables from .env file
 # ------------------------------------------------------------------------
-set -a
-source infra/.env
-set +a
-
-# ------------------------------------------------------------------------
-# Install required packages (Google Cloud SDK, Terraform, kubectl, Helm)
-# ------------------------------------------------------------------------
-
-echo "[INFO] Installing required tools..."
-
-# Install dependencies
-sudo apt-get update && sudo apt-get install -y \
-  apt-transport-https \
-  ca-certificates \
-  curl \
-  gnupg \
-  lsb-release \
-  unzip \
-  software-properties-common
+export $(grep -v '^#' infra/.env | xargs)
 
 # Install Google Cloud SDK
-if ! command -v gcloud &> /dev/null; then
-  echo "[INFO] Installing Google Cloud SDK..."
-  echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
-    sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
-  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-    sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
   sudo apt-get update && sudo apt-get install -y google-cloud-sdk
-fi
 
 # Install Terraform
 if ! command -v terraform &> /dev/null; then
-  echo "[INFO] Installing Terraform..."
   curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
   echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     sudo tee /etc/apt/sources.list.d/hashicorp.list
@@ -46,14 +18,12 @@ fi
 
 # Install kubectl
 if ! command -v kubectl &> /dev/null; then
-  echo "[INFO] Installing kubectl..."
   curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
   chmod +x kubectl && sudo mv kubectl /usr/local/bin/
 fi
 
 # Install helm
 if ! command -v helm &> /dev/null; then
-  echo "[INFO] Installing Helm..."
   curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 fi
 
@@ -61,22 +31,20 @@ fi
 # Initialize Google Cloud project and billing
 # ------------------------------------------------------------------------
 
-echo "[INFO] Setting up GCP project..."
-
-gcloud auth activate-service-account --key-file=".secrets/$GCP_AUTH_FILE"
-gcloud config set project "$PROJECT_ID"
-
-gcloud projects create "$PROJECT_ID" --name="Bees Project" --set-as-default || echo "[WARN] Project may already exist"
-gcloud billing projects link "$PROJECT_ID" --billing-account="$BILLING_ACCOUNT_ID"
-
-gcloud components install gke-gcloud-auth-plugin --quiet
-gcloud components update --quiet
+# Initialize gcloud CLI
+gcloud init
+# Authenticate with Google Cloud (owner of billing account)
+gcloud auth login
+# List authenticated accounts
+gcloud auth list 
+# Install GKE auth plugin for gcloud
+gcloud components install gke-gcloud-auth-plugin
+# Update gcloud components
+gcloud components update
 
 # ------------------------------------------------------------------------
 # Terraform infrastructure provisioning
 # ------------------------------------------------------------------------
-
-echo "[INFO] Running Terraform..."
 
 terraform -chdir=infra/terraform init
 terraform -chdir=infra/terraform apply --auto-approve
@@ -85,7 +53,6 @@ terraform -chdir=infra/terraform apply --auto-approve
 # Create service account key and copy to all pipelines
 # ------------------------------------------------------------------------
 
-echo "[INFO] Creating service account key..."
 
 gcloud iam service-accounts keys create src/pipeline/bronze/gke-service-account.json \
   --iam-account="gke-service-account@$PROJECT_ID.iam.gserviceaccount.com"
@@ -97,8 +64,6 @@ done
 # ------------------------------------------------------------------------
 # Docker image builds
 # ------------------------------------------------------------------------
-
-echo "[INFO] Building Docker images..."
 
 gcloud auth configure-docker us-central1-docker.pkg.dev
 
@@ -122,14 +87,11 @@ docker buildx build --platform linux/amd64 \
 # Upload DAGs
 # ------------------------------------------------------------------------
 
-echo "[INFO] Uploading DAGs..."
 gsutil cp src/dags/*.py gs://bees-airflow-dags/
 
 # ------------------------------------------------------------------------
 # Kubernetes & Airflow Setup
 # ------------------------------------------------------------------------
-
-echo "[INFO] Configuring Kubernetes..."
 
 gcloud container clusters get-credentials airflow-cluster --zone us-central1-c --project "$PROJECT_ID"
 
@@ -183,8 +145,6 @@ kubectl exec -it "$(kubectl get pod -n airflow -l 'component=webserver' -o jsonp
 # ------------------------------------------------------------------------
 # Spark Operator setup
 # ------------------------------------------------------------------------
-
-echo "[INFO] Deploying Spark Operator..."
 
 kubectl create namespace spark || true
 kubectl apply -f infra/kubernetes/spark-operator/rbac.yaml

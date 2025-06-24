@@ -16,7 +16,6 @@ gcloud billing projects link <your-gcp-project-id> --billing-account=<your-billi
 ```plaintext
 PROJECT_ID=<your-gcp-project-id>
 TF_VAR_project_id=<your-gcp-project-id>
-BILLING_ACCOUNT_ID=<your-billing-account-id>
 SMTP_PASSWORD=<your-smtp-password>
 ```
 

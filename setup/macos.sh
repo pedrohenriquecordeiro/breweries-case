@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# To run this script, ensure you have a project id, a owner account or a account with permissions
+# To run this script, ensure you already have a project id and owner account or a account with permissions.
+# Ajust the .env file to set the PROJECT_ID and TF_VAR_project_id.
 
 # Export environment variables from .env file (ignoring comments)
 export $(grep -v '^#' infra/.env | xargs)
@@ -18,11 +19,6 @@ gcloud auth list
 gcloud components install gke-gcloud-auth-plugin
 # Update gcloud components
 gcloud components update
-
-# Create a new GCP project and set as default
-gcloud projects create $PROJECT_ID --name="Bees Project" --set-as-default
-# Link project to billing account
-gcloud billing projects link $PROJECT_ID --billing-account=$BILLING_ACCOUNT_ID
 
 # Add HashiCorp tap for Terraform
 brew tap hashicorp/tap
