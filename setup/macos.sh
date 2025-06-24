@@ -1,22 +1,12 @@
 #!/bin/bash
 
+# To run this script, ensure you have a project id, a owner account or a account with permissions
+
 # Export environment variables from .env file (ignoring comments)
 export $(grep -v '^#' infra/.env | xargs)
 
-# Check if gcloud CLI is installed, install if missing
-if ! command -v gcloud &> /dev/null; then
-  echo "gcloud not found, installing Google Cloud SDK..."
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    # Install Google Cloud SDK on macOS using Homebrew
-    brew install --cask google-cloud-sdk
-  else
-    # Download and install Google Cloud SDK on Linux
-    curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-$(curl -s https://cloud.google.com/sdk/docs/release-notes | grep -oE '([0-9]+\.[0-9]+\.[0-9]+)' | head -1)-linux-x86_64.tar.gz
-    tar -xzf google-cloud-sdk-*-linux-x86_64.tar.gz
-    ./google-cloud-sdk/install.sh -q
-    export PATH="$PATH:$(pwd)/google-cloud-sdk/bin"
-  fi
-fi
+# Install gcloud CLI using Homebrew
+brew install --cask google-cloud-sdk
 
 # Initialize gcloud CLI
 gcloud init
@@ -48,7 +38,7 @@ brew install helm
 # List all GCP projects
 gcloud projects list
 
-# Initialize, plan, and apply Terraform configuration in infra/terraform
+# Initialize, plan and apply Terraform configuration in infra/terraform
 terraform -chdir=infra/terraform init
 terraform -chdir=infra/terraform plan
 terraform -chdir=infra/terraform apply --auto-approve
@@ -62,7 +52,7 @@ cp src/pipeline/bronze/gke-service-account.json src/tests/gke-service-account.js
 # Configure Docker to authenticate with Artifact Registry
 gcloud auth configure-docker us-central1-docker.pkg.dev
 
-# Build and push Docker images for bronze, silver, gold, and tests to Artifact Registry
+# Build and push Docker images for bronze, silver, gold and tests to Artifact Registry
 docker buildx build --platform linux/amd64 \
   -t us-central1-docker.pkg.dev/$PROJECT_ID/bees-docker-repo/bronze/bees-etl-bronze-job:latest \
   --push src/pipeline/bronze/
