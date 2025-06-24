@@ -1,20 +1,20 @@
 
-# Airflow DAGs for Bees Data Platform
+# Airflow DAGs for the Bees Data Platform
 
-This folder contains Apache Airflow DAGs that orchestrate the end-to-end data pipeline for the Bees Data Platform. The DAGs coordinate ETL tasks across multiple Kubernetes workloads, including Python-based ETL jobs and Spark applications, to process and analyze data efficiently.
+This folder contains Apache Airflow DAGs that orchestrate the end-to-end data pipeline for the Bees Data Platform. The DAGs coordinate ETL tasks across multiple Kubernetes workloads, including Python-based ETL jobs and Spark applications, to efficiently process and analyze data.
 
 ## Key Components
 
-- **Apache Airflow:** Manages and schedules data workflows using Python DAGs.
-- **KubernetesPodOperator:** Runs containerized ETL jobs (e.g., bronze layer) on Kubernetes.
+- **Apache Airflow:** Manages and schedules data workflows using Python-based DAGs.
+- **KubernetesPodOperator:** Executes containerized ETL jobs (e.g., bronze layer) on Kubernetes.
 - **SparkKubernetesOperator:** Submits and manages Spark jobs on Kubernetes via the Spark Operator.
-- **Google Kubernetes Engine (GKE):** Hosts all containerized workloads for scalability and reliability.
+- **Google Kubernetes Engine (GKE):** Hosts all containerized workloads, providing scalability and reliability.
 
 ## Usage
 
 1. Ensure Airflow is deployed with access to the required Kubernetes namespaces and service accounts.
 2. Update Docker image references in the DAGs as needed for your environment.
-3. Upload DAG files to your Airflow DAGs folder or sync with a GCS bucket if using GCSFuse.
+3. Upload DAG files to your Airflow DAGs folder, or sync with a GCS bucket if using GCSFuse.
 4. Monitor and manage pipeline execution via the Airflow UI.
 
 For more details on writing SparkApplication manifests and configuring Kubernetes resources, see the references in [readme.md](readme.md).

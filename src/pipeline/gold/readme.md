@@ -49,3 +49,4 @@ gold/
 - **Dockerfile:** Builds the Spark job image, installs dependencies and sets up secrets.
 - **main.py:** Orchestrates the ETL process, including reading from silver, aggregating and writing to gold.
 - **gke-service-account.json:** Credentials for GCS access (should be injected securely in production).
+

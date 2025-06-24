@@ -23,6 +23,6 @@ This folder contains the ETL pipeline jobs for the Bees Data Platform, organized
 
 ## Details
 
-- For details on the bronze layer job, see the [bronze/readme](bronze/readme.md).
-- For details on the silver layer job, see the [silver/readme](silver/readme.md).
-- For details on the gold layer job, see the [gold/readme](gold/readme.md).
+- For details on the bronze layer job, see [bronze/readme](bronze/readme.md).
+- For details on the silver layer job, see [silver/readme](silver/readme.md).
+- For details on the gold layer job, see [gold/readme](gold/readme.md).

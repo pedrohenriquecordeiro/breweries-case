@@ -1,4 +1,4 @@
-# Terraform Infrastructure for Bees Data Platform
+# Terraform Infrastructure for the Bees Data Platform
 
 This folder contains Terraform code to provision and manage the core infrastructure for the Bees data platform on Google Cloud Platform (GCP). It automates the setup of networking, IAM, GKE clusters, storage buckets and other essential resources required for running data workflows and analytics workloads.
 
@@ -13,8 +13,10 @@ This folder contains Terraform code to provision and manage the core infrastruct
 ## Usage
 
 1. Set your GCP project and region in `variables.tf` or via environment variables.
-    - Important: run the following command to set environment variables:
-    ```export $(grep -v '^#' infra/.env | xargs)```
+   - Important: Run the following command to set environment variables:
+     ```sh
+     export $(grep -v '^#' infra/.env | xargs)
+     ```
 2. Initialize Terraform and review the plan:
    ```sh
    terraform init

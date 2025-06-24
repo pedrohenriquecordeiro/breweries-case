@@ -20,8 +20,8 @@ This folder contains the core source code for the Bees Data Platform, a modular 
 - **Apache Airflow**: Workflow scheduling and orchestration.
 - **PyDeequ**: Automated data quality checks.
 
-## Details
+## Additional Information
 
-- To view the pipeline code, refer to [pipeline/readme.md](pipeline/readme.md).
-- For DAGs, see [dags/readme.md](dags/readme.md).
-- For data quality validation jobs, refer to [tests/readme.md](tests/readme.md).
+- To view the pipeline code, see [pipeline/readme.md](pipeline/readme.md).
+- For DAGs, refer to [dags/readme.md](dags/readme.md).
+- For data quality validation jobs, see [tests/readme.md](tests/readme.md).

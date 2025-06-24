@@ -4,7 +4,7 @@ This folder contains all infrastructure-as-code and deployment configurations fo
 
 ## Overview
 
-The infra codebase provisions and configures the foundational cloud and Kubernetes infrastructure required to run data pipelines, orchestrate workflows and manage analytics workloads. It leverages Terraform for declarative infrastructure management and Kubernetes manifests/Helm charts for deploying and configuring platform components such as Apache Airflow and the Spark Operator.
+The infrastructure codebase provisions and configures the foundational cloud and Kubernetes infrastructure required to run data pipelines, orchestrate workflows and manage analytics workloads. It leverages Terraform for declarative infrastructure management and Kubernetes manifests/Helm charts for deploying and configuring platform components such as Apache Airflow and the Spark Operator.
 
 ## Codebase Breakdown
 
@@ -12,7 +12,7 @@ The infra codebase provisions and configures the foundational cloud and Kubernet
   Contains all Terraform code for provisioning GCP resources, including networking, IAM, GKE clusters, storage buckets and artifact registries. This is the entry point for infrastructure provisioning.
 
 - **kubernetes/**  
-  Contains Kubernetes manifests and Helm configurations for deploying and managing platform services on GKE, including Airflow and Spark Operator. Subfolders organize resources by component.
+  Contains Kubernetes manifests and Helm configurations for deploying and managing platform services on GKE, including Airflow and the Spark Operator. Subfolders organize resources by component.
 
 - **.env**  
   Environment variable file for Terraform and deployment scripts (never commit secrets).
@@ -29,7 +29,7 @@ The infra codebase provisions and configures the foundational cloud and Kubernet
   Container orchestration platform for scalable, resilient deployment of platform components.
 
 - **Helm:**  
-  Kubernetes package manager used to deploy and configure Airflow and Spark Operator.
+  Kubernetes package manager used to deploy and configure Airflow and the Spark Operator.
 
 - **GCSFuse:**  
   Mounts Google Cloud Storage buckets as persistent volumes for Airflow DAGs and logs.
@@ -73,5 +73,5 @@ infra/
 
 ## Details
 
-- For Terraform details, see the [terraform/readme](terraform/readme.md).
-- For Kubernetes details, see the [kubernetes/readme](kubernetes/readme.md).
+- For Terraform details, see [terraform/readme](terraform/readme.md).
+- For Kubernetes details, see [kubernetes/readme](kubernetes/readme.md).

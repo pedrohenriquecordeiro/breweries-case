@@ -1,6 +1,6 @@
 # Data Quality Tests
 
-This folder contains the data quality validation suite for the Bees Data Platform. The tests are designed to ensure the integrity, consistency and correctness of data processed through the ETL pipeline, with a focus on validating the silver layer Delta tables stored in Google Cloud Storage (GCS). The tests are implemented as a containerized Spark job using PySpark and PyDeequ and are intended to run on Kubernetes.
+This folder contains the data quality validation suite for the Bees Data Platform. The tests are designed to ensure the integrity, consistency and correctness of data processed through the ETL pipeline, with a focus on validating the silver-layer Delta tables stored in Google Cloud Storage (GCS). The tests are implemented as a containerized Spark job using PySpark and PyDeequ and are intended to run on Kubernetes.
 
 ## Overview
 

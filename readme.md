@@ -2,14 +2,14 @@
 
 ## Overview
 
-**Breweries Case** is a modular, cloud-native data platform for ingesting, processing, validating and analyzing brewery data at scale. Built on Google Cloud Platform (GCP), it implements a layered data lakehouse architecture (Bronze, Silver, Gold) and orchestrates ETL workflows using Apache Airflow and Kubernetes. The platform ensures data quality, reproducibility and scalability, making it suitable for analytics and reporting use cases.
+**Breweries Case** is a modular, cloud-native data platform designed for ingesting, processing, validating and analyzing brewery data at scale. Built on Google Cloud Platform (GCP), it implements a layered data lakehouse architecture (Bronze, Silver, Gold) and orchestrates ETL workflows using Apache Airflow and Kubernetes. The platform ensures data quality, reproducibility and scalability, making it ideal for analytics and reporting use cases.
 
 ## Codebase Breakdown
 
 ### Core Components
 
 - **ETL Pipelines (`src/pipeline/`)**  
-  - **bronze/**: Ingests raw data from the Open Brewery DB API, stores it as JSON in GCS and manages incremental/full loads with metadata.
+  - **bronze/**: Ingests raw data from the Open Brewery DB API, stores it as JSON in GCS and manages incremental or full loads with metadata.
   - **silver/**: Reads raw data from bronze, applies schema enforcement and deduplication and writes curated Delta Lake tables to GCS.
   - **gold/**: Aggregates curated data from silver, producing analytics-ready Delta tables for downstream consumption.
 
@@ -17,13 +17,13 @@
   Contains Apache Airflow DAGs that coordinate ETL tasks across Kubernetes workloads, including Python-based ETL jobs and Spark applications.
 
 - **Data Quality Tests (`src/tests/`)**  
-  Containerized Spark jobs using PyDeequ to validate the integrity, completeness and correctness of the curated data (silver layer).
+  Containerized Spark jobs using PyDeequ to validate the integrity, completeness and correctness of curated data (silver layer).
 
 - **Infrastructure (`infra/`)**  
-  Infrastructure-as-code for provisioning GCP resources (Terraform), Kubernetes manifests and Helm charts for deploying Airflow and Spark Operator.
+  Infrastructure-as-code for provisioning GCP resources (Terraform), Kubernetes manifests and Helm charts for deploying Airflow and the Spark Operator.
 
 - **Notebooks (`notebooks/`)**  
-  Jupyter notebooks for data exploration and analytics using the processed data. Users can visualize and analyze the brewery data interactively.
+  Jupyter notebooks for data exploration and analytics using the processed data. Users can visualize and analyze brewery data interactively.
 
 - **Setup Scripts (`setup/`)**  
   Shell scripts for environment setup on macOS and Ubuntu.
@@ -38,7 +38,7 @@
 - **Apache Spark & Delta Lake:** Distributed ETL and ACID-compliant data storage.
 - **PyDeequ:** Automated data quality validation on Spark DataFrames.
 - **Terraform:** Infrastructure-as-code for reproducible cloud resource provisioning.
-- **Helm:** Kubernetes package manager for deploying Airflow and Spark Operator.
+- **Helm:** Kubernetes package manager for deploying Airflow and the Spark Operator.
 - **Docker:** Containerization for ETL and validation jobs.
 - **Kubernetes:** Orchestrates containerized workloads for scalability and reliability.
 
@@ -76,7 +76,7 @@ breweries-case/
 
 ### Details
 
-- To check the infrastructure setup, see [infra/readme.md](infra/readme.md).
+- For infrastructure setup, see [infra/readme.md](infra/readme.md).
 - For the main source code, refer to [src/readme.md](src/readme.md).
 - For setup scripts, see [setup/readme.md](setup/readme.md).
-- For documentation see the folder docs/.
+- For documentation, see the `docs/` folder.
