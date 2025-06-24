@@ -14,8 +14,9 @@ This folder contains Apache Airflow DAGs that orchestrate the end-to-end data pi
 
 1. Ensure Airflow is deployed with access to the required Kubernetes namespaces and service accounts.
 2. Update Docker image references in the DAGs as needed for your environment.
-3. Upload DAG files to your Airflow DAGs folder, or sync with a GCS bucket if using GCSFuse.
-4. Monitor and manage pipeline execution via the Airflow UI.
+3. Set the right project ID in DAG code.
+4. Upload DAG files to your Airflow DAGs folder and sync with a GCS bucket if using GCSFuse.
+5. Monitor and manage pipeline execution via the Airflow UI.
 
 For more details on writing SparkApplication manifests and configuring Kubernetes resources, see the references in [readme.md](readme.md).
 
