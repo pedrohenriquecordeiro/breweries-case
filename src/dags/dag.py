@@ -7,12 +7,18 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 
 
-PROJECT_ID = "bees-463419"  # Replace with your GCP project ID
+PROJECT_ID = "<your-gcp-project-id>"  # Replace with your GCP project ID
+
+# Docker images for each stage of the ETL process
+bronze_image            = f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/bronze/bees-etl-bronze-job:latest"
+silver_image            = f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/silver/bees-etl-silver-job:latest"
+gold_image              = f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/gold/bees-etl-gold-job:latest"
+test_data_quality_image = f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/tests/bees-test-data-quality:latest"
 
 # Default arguments for the DAG
 DEFAULT_ARGS = {
   "owner"            : "Pedro Jesus",
-  "start_date"       : pendulum.datetime(2025, 6, 17, tz = pendulum.timezone("America/Sao_Paulo")),
+  "start_date"       : pendulum.datetime(2025, 6, 25, tz = pendulum.timezone("America/Sao_Paulo")),
   "email"            : ["pedrohcordeiroj@gmail.com"],
   "email_on_failure" : True,
   "email_on_retry"   : True,
@@ -26,37 +32,37 @@ SPARK_APPLICATION_MANIFEST = '''
   apiVersion: sparkoperator.k8s.io/v1beta2
   kind: SparkApplication
   metadata:
-  name: spark-job                            # Name of the Spark application
-  namespace: spark                           # Kubernetes namespace
+    name: spark-job                            # Name of the Spark application
+    namespace: spark                           # Kubernetes namespace
   spec:
-  type: Python                               # Type of Spark job
-  pythonVersion: "3"
-  sparkVersion: "3.5.3"                      # Spark version to use
-  mode: cluster                              # Run in cluster mode
-  image: {IMAGE_SPARK}                       # Docker image with your Spark job
-  imagePullSecrets:
-    - gke-service-account-secret
-  imagePullPolicy: Always                    # Always pull image (only for development)
-  mainApplicationFile: local:///app/main.py  # Entry point for your Spark app
-  driver:
-    serviceAccount: spark-service-account
-    coreRequest: 500m                        # CPU request for the driver
-    coreLimit: 2000m                         # CPU limit for the driver
-    memory: 3906m                            # aprox 4GB
-    labels:
-    app: spark-driver
-  executor:
-    serviceAccount: spark-service-account
-    coreRequest: 500m
-    coreLimit: 2000m
-    memory: 3906m                            # aprox 4GB
-    labels:
-    app: spark-executor
-  dynamicAllocation:
-    enabled: true
-    initialExecutors: 3
-    minExecutors: 1
-    maxExecutors: 6
+    type: Python                               # Type of Spark job
+    pythonVersion: "3"
+    sparkVersion: "3.5.3"                      # Spark version to use
+    mode: cluster                              # Run in cluster mode
+    image: {IMAGE_SPARK}                       # Docker image with your Spark job
+    imagePullSecrets:
+      - gke-service-account-secret
+    imagePullPolicy: Always                    # Always pull image (only for development)
+    mainApplicationFile: local:///app/main.py  # Entry point for your Spark app
+    driver:
+      serviceAccount: spark-service-account
+      coreRequest: 500m                        # CPU request for the driver
+      coreLimit: 2000m                         # CPU limit for the driver
+      memory: 3906m                            # aprox 4GB
+      labels:
+        app: spark-driver
+    executor:
+      serviceAccount: spark-service-account
+      coreRequest: 500m
+      coreLimit: 2000m
+      memory: 3906m                            # aprox 4GB
+      labels:
+        app: spark-executor
+    dynamicAllocation:
+      enabled: true
+      initialExecutors: 3
+      minExecutors: 1
+      maxExecutors: 10
 '''
 
 @dag(
@@ -74,7 +80,7 @@ def pipeline_dag():
   bronze_task = KubernetesPodOperator(
     task_id                = "bronze_task",
     namespace              = "airflow",
-    image                  = f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/bronze/bees-etl-bronze-job:latest",
+    image                  = bronze_image,
     image_pull_secrets     = [k8s.V1LocalObjectReference("gke-service-account-secret")],
     image_pull_policy      = "Always", # only for development
     get_logs               = True,
@@ -92,18 +98,18 @@ def pipeline_dag():
     get_logs                = True,
     startup_timeout_seconds = 600,
     delete_on_termination   = True,
-    application_file        = SPARK_APPLICATION_MANIFEST.replace("{IMAGE_SPARK}", f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/silver/bees-etl-silver-job:latest"),
+    application_file        = SPARK_APPLICATION_MANIFEST.replace("{IMAGE_SPARK}", silver_image),
     kubernetes_conn_id      = "in_cluster_configuration_kubernetes_cluster"
   )
   
   # Data quality test: Run Spark job for data quality checks
-  test_data_quality_test = SparkKubernetesOperator(
-    task_id                 = "test_data_quality_test",
+  test_data_quality = SparkKubernetesOperator(
+    task_id                 = "test_data_quality",
     namespace               = "spark",
     get_logs                = True,
     startup_timeout_seconds = 600,
     delete_on_termination   = True,
-    application_file        = SPARK_APPLICATION_MANIFEST.replace("{IMAGE_SPARK}", f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/tests/bees-test-data-quality:latest"),
+    application_file        = SPARK_APPLICATION_MANIFEST.replace("{IMAGE_SPARK}", test_data_quality_image),
     kubernetes_conn_id      = "in_cluster_configuration_kubernetes_cluster"
   )
   
@@ -114,11 +120,11 @@ def pipeline_dag():
     get_logs                = True,
     startup_timeout_seconds = 600,
     delete_on_termination   = True,
-    application_file        = SPARK_APPLICATION_MANIFEST.replace("{IMAGE_SPARK}", f"us-central1-docker.pkg.dev/{PROJECT_ID}/bees-docker-repo/gold/bees-etl-gold-job:latest"),
+    application_file        = SPARK_APPLICATION_MANIFEST.replace("{IMAGE_SPARK}", gold_image),
     kubernetes_conn_id      = "in_cluster_configuration_kubernetes_cluster"
   )
 
   # Define task dependencies
-  start >> bronze_task >> silver_task >> [ gold_task , test_data_quality_test ]
+  start >> bronze_task >> silver_task >> [ gold_task , test_data_quality ]
 
 pipeline_dag()

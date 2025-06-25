@@ -9,7 +9,7 @@ def load_metadata():
     Loads metadata from a Google Cloud Storage (GCS) bucket.
 
     This function connects to a GCS bucket specified by the BUCKET_NAME environment variable,
-    retrieves the 'bronze/_metadata/metadata.json' file, and parses its contents as JSON.
+    retrieves the 'bronze/_metadata/metadata.json' file and parses its contents as JSON.
     If the metadata cannot be loaded for any reason, an empty dictionary is returned.
 
     Returns:
@@ -20,13 +20,15 @@ def load_metadata():
         - Warning message if loading fails, including the exception details.
     """
     
-    client = storage.Client()
-    bucket = client.get_bucket(os.environ["BUCKET_NAME"])
-    blob = bucket.blob("bronze/_metadata/metadata.json")
     try:
+        client = storage.Client()
+        bucket = client.get_bucket(os.environ["BUCKET_NAME"])
+        blob = bucket.blob("bronze/_metadata/metadata.json")
+    
         data = blob.download_as_text()
         logging.info("Loaded metadata from GCS.")
         return json.loads(data)
+    
     except Exception as e:
         logging.warning(f"Could not load metadata: {e}")
         return {}
@@ -51,13 +53,17 @@ def save_metadata(metadata: dict):
         Logs an info message upon successful save of the metadata.
     """
     
-    client = storage.Client()
-    bucket = client.get_bucket(os.environ["BUCKET_NAME"])
-    blob   = bucket.blob("bronze/_metadata/metadata.json")
-    blob.upload_from_string(json.dumps(metadata, indent = 2), content_type = "application/json")
-    
-    logging.info(f"Saved metadata: {metadata}")
-
+    try:
+        client = storage.Client()
+        bucket = client.get_bucket(os.environ["BUCKET_NAME"])
+        blob   = bucket.blob("bronze/_metadata/metadata.json")
+        blob.upload_from_string(json.dumps(metadata, indent = 2), content_type = "application/json")
+        
+        logging.info(f"Saved metadata: {metadata}")
+        
+    except Exception as e:
+        logging.error(f"Could not save metadata: {e}")
+        raise e
 
 
 def save_file_to_gcs(data: dict, path: str = "bronze"):
@@ -79,9 +85,13 @@ def save_file_to_gcs(data: dict, path: str = "bronze"):
         Logs an info message indicating the file has been saved to GCS.
     """
     
-    client = storage.Client()
-    bucket = client.get_bucket(os.environ["BUCKET_NAME"])
-    blob   = bucket.blob(path)
-    blob.upload_from_string(json.dumps(data, indent = 2), content_type = "application/json")
-    
-    logging.info(f"Saved file to GCS at {path}.")
+    try:
+        client = storage.Client()
+        bucket = client.get_bucket(os.environ["BUCKET_NAME"])
+        blob   = bucket.blob(path)
+        blob.upload_from_string(json.dumps(data, indent = 2), content_type = "application/json")
+        
+        logging.info(f"Saved file to GCS at {path}.")
+    except Exception as e:
+        logging.error(f"Could not save file to GCS: {e}")
+        raise e

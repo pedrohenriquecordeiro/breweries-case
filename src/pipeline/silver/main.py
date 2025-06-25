@@ -22,6 +22,7 @@ if __name__ == "__main__":
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
         .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
         .config("spark.databricks.delta.retentionDurationCheck.enabled", "false")
+        .config("spark.dynamicAllocation.shuffleTracking.enabled", "true")  # Kubernetes-safe
         .config("spark.sql.adaptive.enabled", "true")  # Boost performance on joins and skewed data
         .getOrCreate()
     )
@@ -109,11 +110,5 @@ if __name__ == "__main__":
         logging.info("Appended new records to silver table.")
     else:
         logging.info("No new records to append.")
-
-    # ------------------------------------------------------------------------------
-    # Vacuum Delta table to remove old versions immediately
-    # ------------------------------------------------------------------------------
-    delta_table = DeltaTable.forPath(spark, silver_path)
-    delta_table.vacuum(0)  # 0 hours retention
 
     spark.stop()

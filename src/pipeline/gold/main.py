@@ -41,7 +41,7 @@ if __name__ == "__main__":
     df_silver.createOrReplaceTempView("silver")
 
     # ------------------------------------------------------------------------------
-    # Aggregate brewery counts by type, country, state, and city
+    # Aggregate brewery counts by type, country, state and city
     # ------------------------------------------------------------------------------
     aggregated_df = spark.sql("""
         SELECT
@@ -73,11 +73,5 @@ if __name__ == "__main__":
                 .save(gold_path)
         )
         logging.info("Appended new records to gold table.")
-
-    # ------------------------------------------------------------------------------
-    # Vacuum Delta table to remove old versions immediately
-    # ------------------------------------------------------------------------------
-    delta_table = DeltaTable.forPath(spark, gold_path)
-    delta_table.vacuum(0)  # 0 hours retention
 
     spark.stop()

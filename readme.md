@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Breweries Case** is a modular, cloud-native data platform designed for ingesting, processing, validating and analyzing brewery data at scale. Built on Google Cloud Platform (GCP), it implements a layered data lakehouse architecture (Bronze, Silver, Gold) and orchestrates ETL workflows using Apache Airflow and Kubernetes. The platform ensures data quality, reproducibility and scalability, making it ideal for analytics and reporting use cases.
+**Breweries Case** is a modular, cloud-native data platform for ingesting, processing, validating and analyzing brewery data at scale. Built on Google Cloud Platform (GCP), it leverages a layered data lakehouse architecture (Bronze, Silver, Gold) and orchestrates ETL workflows using Apache Airflow and Kubernetes. The platform emphasizes data quality, reproducibility and scalability, making it ideal for analytics and reporting.
 
 ## Codebase Breakdown
 
@@ -19,17 +19,14 @@
 - **Data Quality Tests (`src/tests/`)**  
   Containerized Spark jobs using PyDeequ to validate the integrity, completeness and correctness of curated data (silver layer).
 
+- **Notebooks (`src/notebooks/`)**  
+  Jupyter notebooks for interactive data exploration and analytics using the processed data.
+
 - **Infrastructure (`infra/`)**  
   Infrastructure-as-code for provisioning GCP resources (Terraform), Kubernetes manifests and Helm charts for deploying Airflow and the Spark Operator.
 
-- **Notebooks (`notebooks/`)**  
-  Jupyter notebooks for data exploration and analytics using the processed data. Users can visualize and analyze brewery data interactively.
-
-- **Setup Scripts (`setup/`)**  
-  Shell scripts for environment setup on macOS and Ubuntu.
-
 - **Documentation (`docs/`)**  
-  Detailed architecture, setup and usage guides.
+  Comprehensive architecture, setup and usage guides.
 
 ## Key Libraries and Tools
 
@@ -74,9 +71,33 @@ breweries-case/
 │   └── tests/                  # Data quality validation jobs
 ```
 
-### Details
+## Data Catalog
+
+The Breweries Case platform ingests data from the public Open Brewery DB API, which provides structured, machine-readable JSON data. The ETL pipeline retrieves this data via HTTP requests, handling pagination, rate limits and network errors to ensure reliable and complete extraction. Raw API data is stored in the bronze layer, preserving its original structure for traceability and future reprocessing.
+
+| Column           | Type      | Description                                                                 |
+|------------------|-----------|-----------------------------------------------------------------------------|
+| id               | string    | Unique identifier (UUID) for the brewery                                    |
+| name             | string    | Name of the brewery                                                         |
+| brewery_type     | string    | Type of brewery (e.g., micro, brewpub, planning, contract)                  |
+| address_1        | string    | Primary street address                                                      |
+| address_2        | string    | Secondary address line (optional)                                           |
+| address_3        | string    | Tertiary address line (optional)                                            |
+| city             | string    | City where the brewery is located                                           |
+| state_province   | string    | State or province                                                           |
+| postal_code      | string    | Postal or ZIP code                                                          |
+| country          | string    | Country                                                                     |
+| longitude        | float     | Longitude coordinate (nullable)                                             |
+| latitude         | float     | Latitude coordinate (nullable)                                              |
+| phone            | string    | Contact phone number (nullable)                                             |
+| website_url      | string    | Website URL (nullable)                                                      |
+| state            | string    | State name                                                                  |
+| street           | string    | Street address                                                               |
+
+### Additional Resources
 
 - For infrastructure setup, see [infra/readme.md](infra/readme.md).
 - For the main source code, refer to [src/readme.md](src/readme.md).
 - For setup scripts, see [setup/readme.md](setup/readme.md).
 - For documentation, see the `docs/` folder.
+

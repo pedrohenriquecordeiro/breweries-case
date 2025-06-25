@@ -29,13 +29,8 @@ The `breweries-case` project is a modular, cloud-native data platform for ingest
 ## 3. Data Lake Design
 
 - **Bronze:** Raw ingested JSON data from APIs, stored as-is for traceability. Metadata tracks the last processed record.
-- **Silver:** Cleaned, deduplicated, schema-enforced data as Delta Lake tables, partitioned for efficient access.
+- **Silver:** Cleaned, deduplicated, schema-enforced data as Delta Lake tables, partitioned by `country`, `state` and `city` fields for efficient querying.
 - **Gold:** Aggregated, analytics-ready datasets as Delta Lake tables, optimized for reporting.
-
-**Technologies:**  
-- **Storage:** GCS  
-- **Format:** JSON (Bronze), Delta Lake (Silver/Gold)  
-- **Partitioning:** Silver layer by `country`, `state` and `city`
 
 ## 4. Data Pipeline Architecture
 
@@ -70,7 +65,7 @@ The `breweries-case` project is a modular, cloud-native data platform for ingest
 - **CI/CD:** Docker images are built and pushed to Artifact Registry; deployment scripts automate infrastructure and job deployment.
 - **Infrastructure as Code:** All infrastructure is versioned and reproducible.
 
-## 9. Scalability & Performance Considerations
+## 8. Scalability & Performance Considerations
 
 - **Horizontal Scaling:** Kubernetes auto-scales pods.
 - **Partitioning:** Delta Lake tables are partitioned for efficient queries.
@@ -78,7 +73,7 @@ The `breweries-case` project is a modular, cloud-native data platform for ingest
 - **Fault Tolerance:** Airflow retries failed tasks; Kubernetes restarts failed pods.
 - **Resource Optimization:** Spark jobs are tuned for memory and CPU; GKE node pools are adjustable.
 
-## 10. Design Decisions & Trade-offs
+## 9. Design Decisions & Trade-offs
 
 | Decision | Rationale | Trade-offs |
 |----------|-----------|------------|
@@ -90,18 +85,19 @@ The `breweries-case` project is a modular, cloud-native data platform for ingest
 | **Terraform & Helm** | Reproducible, automated infrastructure management | Requires infrastructure-as-code expertise |
 | **Service Account Key Injection** | Secure, avoids hardcoding secrets | Requires careful secret management |
 
-## Summary
 
-The `breweries-case` architecture is designed for reliability, scalability and data quality in a modern cloud-native analytics environment. It leverages best practices in data lakehouse design, workflow orchestration and infrastructure automation, making it robust for production workloads and extensible for future requirements.
+## Improvements
 
-# Improvements 
-- **Service Accounts:** Implement dedicated service accounts for each component to enforce least-privilege access.
-- **Network Policies:** Use Kubernetes Network Policies to restrict pod-to-pod communication, enhancing security.
+- **Service Accounts:** Use dedicated service accounts for each component to enforce least-privilege access.
+- **Network Policies:** Apply Kubernetes Network Policies to restrict pod-to-pod communication, enhancing security.
 - **Secret Management:** Use GCP Secret Manager or Kubernetes Secrets for managing sensitive information such as API keys, database credentials and service account keys.
-- **Deploy Nginx Ingress Controller:** For improved traffic management to the Airflow UI.
-- **Domain Name:** Consider using a custom domain for the Airflow UI and other services to enhance accessibility.
-- **GitSync for Airflow DAGs:** Use GitSync to automatically sync DAGs from a Git repository to the Airflow environment, ensuring version control and easy updates.
-- **Grafana for Monitoring:** Integrate Grafana with Prometheus to visualize metrics from Airflow and Kubernetes, providing better insights into system performance.
-- **NFS for Shared Storage:** Use NFS or a similar solution for shared storage between Airflow, PostgreSQL and Spark jobs, allowing for easier data access and management.
-- **External PostgreSQL Database:** Consider using an external PostgreSQL database for Airflow metadata to improve performance and scalability, especially for larger deployments.
+- **Nginx Ingress Controller:** Deploy for improved traffic management to the Airflow UI.
+- **Domain Name:** Use a custom domain for the Airflow UI and other services to enhance accessibility.
+- **GitSync for Airflow DAGs:** Automatically sync DAGs from a Git repository to the Airflow environment for version control and easy updates.
+- **Grafana for Monitoring:** Integrate Grafana with Prometheus to visualize metrics from Airflow and Kubernetes, providing better system insights.
+- **NFS for Shared Storage:** Use NFS or a similar solution for shared storage between Airflow, PostgreSQL and Spark jobs for easier data access and management.
+- **External PostgreSQL Database:** Use an external PostgreSQL database for Airflow metadata to improve performance and scalability, especially for larger deployments.
+- **Sonarqube for Code Quality:** Integrate Sonarqube to analyze code quality, maintainability and security vulnerabilities in the project.
+- **ArgoCD for Continuous Deployment:** Implement ArgoCD for GitOps-style continuous deployment, allowing for automated and version-controlled deployments of Kubernetes resources.
+- **Automated Testing:** Implement unit and integration tests for ETL pipelines and data quality checks
 
