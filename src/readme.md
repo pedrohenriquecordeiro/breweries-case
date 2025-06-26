@@ -10,6 +10,7 @@ This folder contains the core source code for the Bees Data Platform, a modular 
   - **gold/**: Aggregates and transforms curated data for analytics.
 - **dags/**: Apache Airflow DAGs for orchestrating ETL workflows on Kubernetes.
 - **tests/**: Data quality validation jobs using PyDeequ and Spark.
+- **notebooks/**: Jupyter notebooks for exploratory data analysis and visualization.
 
 ## Main Libraries and Tools
 

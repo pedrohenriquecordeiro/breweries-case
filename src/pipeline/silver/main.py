@@ -39,6 +39,7 @@ if __name__ == "__main__":
     try:
         df_bronze = spark.read.option("multiLine", True).json(bronze_path)
         df_bronze.createOrReplaceTempView("bronze")
+        
     except AnalysisException as e:
         logging.error(f"Bronze path not found or unreadable at {bronze_path}: {e}")
         sys.exit(1)
@@ -51,8 +52,10 @@ if __name__ == "__main__":
     try:
         df_silver = spark.read.format("delta").load(silver_path)
         df_silver.createOrReplaceTempView("silver")
+        
     except AnalysisException:
         logging.warning(f"Silver table not found at {silver_path}. Initializing empty Delta table.")
+        
         # create an empty Delta table using bronze schema
         empty_silver = spark.createDataFrame([], df_bronze.schema)
         empty_silver.write.format("delta").mode("overwrite").partitionBy("country","state", "city").save(silver_path)
@@ -108,6 +111,7 @@ if __name__ == "__main__":
                 .save(silver_path)
         )
         logging.info("Appended new records to silver table.")
+        
     else:
         logging.info("No new records to append.")
 
