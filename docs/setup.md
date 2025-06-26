@@ -87,13 +87,11 @@ brew install --cask google-cloud-sdk
 ```bash
 gcloud init # preferably set an account with admin permissions or owner role
 gcloud auth login
-gcloud auth list
 gcloud components install gke-gcloud-auth-plugin
 gcloud components update
 ```
 - `gcloud init`: Set up project and authentication.
 - `auth login`: Authenticate your user.
-- `auth list`: List all authenticated accounts.
 - `components install`: Required for GKE cluster authentication.
 
 ## 6. Install Developer Tools
@@ -108,25 +106,7 @@ brew install kubectl
 brew install kubectx
 brew install helm
 
-# Linux
-sudo apt-get install -y gnupg software-properties-common curl
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt-get update && sudo apt-get install -y terraform
-
-sudo apt-get install -y apt-transport-https ca-certificates
-sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update && sudo apt-get install -y kubectl
-
-sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
-sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
-sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
-
-curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
-sudo apt-get install -y apt-transport-https --no-install-recommends
-echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt-get update && sudo apt-get install -y helm
+# Linux : search how to install Terraform, kubectl, kubectx and Helm
 ```
 
 ## 7. Go to Project Root Directory
@@ -188,7 +168,7 @@ docker buildx build --platform linux/amd64 \
   --push src/tests/
 ```
 
-This step takes about 20 minutes to complete.
+This step takes about 15 minutes to complete.
 
 ## 12. Upload Airflow DAGs to GCS
 
@@ -230,7 +210,7 @@ kubectl apply -f infra/kubernetes/airflow/rbac.yaml
 
 ## 15. Grant Storage Access to GSA (Google Service Account)
 
-Allow Airflow access to read/write logs and DAGs in GCS.
+Allow Airflow access to read/write logs, DAGs and data in GCS.
 
 ```bash
 gcloud storage buckets add-iam-policy-binding gs://bees-airflow-logs \
@@ -238,6 +218,10 @@ gcloud storage buckets add-iam-policy-binding gs://bees-airflow-logs \
   --role="roles/storage.objectAdmin"
 
 gcloud storage buckets add-iam-policy-binding gs://bees-airflow-dags \
+  --member="serviceAccount:gke-service-account@$PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin"
+
+gcloud storage buckets add-iam-policy-binding gs://bees-storage \
   --member="serviceAccount:gke-service-account@$PROJECT_ID.iam.gserviceaccount.com" \
   --role="roles/storage.objectAdmin"
 ```
@@ -335,6 +319,10 @@ To log in, use username and password: `bees`.
 
 ## 23. Run Airflow DAG
 
+> **Alert:**  
+> Before running the DAG, check your GCP project quotas—especially for the Compute Engine API. If you exceed quota limits, the cluster may not scale up, causing the DAG to fail or run slowly.  
+> Review your quotas at [https://console.cloud.google.com/iam-admin/quotas](https://console.cloud.google.com/iam-admin/quotas).
+
 Open the Airflow UI at [http://localhost:8080](http://localhost:8080) and trigger the DAG `data-pipeline-breweries`. You can monitor the execution of the DAG and check the logs for each task.
 
 To see the pods created by the DAG, run:
@@ -346,12 +334,25 @@ kubectl get pods -n spark --watch
 
 The first run may take about 25 minutes to complete, but subsequent runs will be faster as the data is already partitioned.
 
-> **Alert:**  
-> You may need to check your quota limits in your GCP project, especially the Compute Engine API quotas. If you encounter a limit error, the cluster will not be able to scale up and the DAG will fail or the process will be very slow.  
-> To check your quotas, visit https://console.cloud.google.com/iam-admin/quotas.
+
 
 ## 24. Check Results
 
 After the DAG execution is complete, you can check the results in the GCS buckets using the notebook in `src/notebooks/show.ipynb`. There is pre-written code to show the results of the silver and gold pipelines.
 
 To check the results of test data quality you can see the logs of the task in airflow, or download the results from the GCS bucket `gs://bees-airflow-logs/`. If the task fails, an email will be sent to the configured SMTP server with the error details.
+
+## 25. Clean Up Resources
+To clean up all resources created during the setup, run:
+
+```bash
+terraform -chdir=infra/terraform destroy --auto-approve
+```
+
+If some error message just run the command again, it will delete all resources created by Terraform.
+
+After running the command, you can also delete the GCP project if you no longer need it:
+
+```bash
+gcloud projects delete <your-gcp-project-id>
+```

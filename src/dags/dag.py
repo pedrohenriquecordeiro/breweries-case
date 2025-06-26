@@ -48,14 +48,14 @@ SPARK_APPLICATION_MANIFEST = '''
       serviceAccount: spark-service-account
       coreRequest: 500m                        # CPU request for the driver
       coreLimit: 2000m                         # CPU limit for the driver
-      memory: 3906m                            # aprox 4GB
+      memory: 4096m
       labels:
         app: spark-driver
     executor:
       serviceAccount: spark-service-account
       coreRequest: 500m
       coreLimit: 2000m
-      memory: 3906m                            # aprox 4GB
+      memory: 4096m
       labels:
         app: spark-executor
     dynamicAllocation:
