@@ -320,8 +320,8 @@ To log in, use username and password: `bees`.
 ## 23. Run Airflow DAG
 
 > **Alert:**  
-> Before running the DAG, check your GCP project quotas—especially for the Compute Engine API. If you exceed quota limits, the cluster may not scale up, causing the DAG to fail or run slowly.  
-> Review your quotas at [https://console.cloud.google.com/iam-admin/quotas](https://console.cloud.google.com/iam-admin/quotas).
+> Before running the DAG, check your GCP project quotas—especially for the Compute Engine API (C2D CPUs, CPUs (all regions), Persistent Disk SSD (GB), etc.). If you exceed quota limits, the cluster may not scale up, causing the DAG to fail or run slowly.  
+> Review your quotas at [https://console.cloud.google.com/iam-admin/quotas](https://console.cloud.google.com/iam-admin/quotas) and keep looking at it during the DAG execution.
 
 Open the Airflow UI at [http://localhost:8080](http://localhost:8080) and trigger the DAG `data-pipeline-breweries`. You can monitor the execution of the DAG and check the logs for each task.
 
